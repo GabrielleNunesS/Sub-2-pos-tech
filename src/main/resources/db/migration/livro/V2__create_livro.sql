@@ -1,0 +1,9 @@
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+CREATE TABLE livros (
+    isbn VARCHAR(13) PRIMARY KEY,
+    titulo VARCHAR(150) NOT NULL UNIQUE,
+    autor VARCHAR(100)  NOT NULL,
+    editora VARCHAR(100)  NOT NULL,
+    quantidade INT NOT NULL DEFAULT 0
+);

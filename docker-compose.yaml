@@ -1,0 +1,73 @@
+services:
+  db-usuario:
+    image: postgres
+    container_name: db-usuario
+    environment:
+      POSTGRES_DB: usuario
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5434:5432"
+    volumes:
+      - usuario-data:/var/lib/postgresql/db
+
+  db-livro:
+    image: postgres
+    container_name: db-livro
+    environment:
+      POSTGRES_DB: livro
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5435:5432"
+    volumes:
+      - livro-data:/var/lib/postgresql/db
+
+  db-emprestimo:
+    image: postgres
+    container_name: db-emprestimo
+    environment:
+      POSTGRES_DB: emprestimo
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5436:5432"
+    volumes:
+      - emprestimo-data:/var/lib/postgresql/db
+
+  app:
+    build: .
+    container_name: biblioteca-app
+    ports:
+      - "8081:8081"
+    networks:
+      - biblioteca-net
+    depends_on:
+      - db-usuario
+      - db-livro
+      - db-emprestimo
+    environment:
+      SPRING_DATASOURCE_USUARIO_JDBC-URL: jdbc:postgresql://db-usuario:5432/usuario
+      SPRING_DATASOURCE_USUARIO_USERNAME: root
+      SPRING_DATASOURCE_USUARIO_PASSWORD: root
+
+      SPRING_DATASOURCE_LIVRO_JDBC-URL: jdbc:postgresql://db-livro:5432/livro
+      SPRING_DATASOURCE_LIVRO_USERNAME: root
+      SPRING_DATASOURCE_LIVRO_PASSWORD: root
+
+      SPRING_DATASOURCE_EMPRESTIMO_JDBC-URL: jdbc:postgresql://db-emprestimo:5432/emprestimo
+      SPRING_DATASOURCE_EMPRESTIMO_USERNAME: root
+      SPRING_DATASOURCE_EMPRESTIMO_PASSWORD: root
+
+volumes:
+  usuario-data:
+    driver: local
+  livro-data:
+    driver: local
+  emprestimo-data:
+    driver: local
+
+
+networks:
+  biblioteca-net:
+    driver: bridge
